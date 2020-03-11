@@ -69,17 +69,13 @@ class VKStatistic:
         for x in self.dict_points: #  Заполнение словаря кодами в зависимости от выбора пользователя
             if self.dict_points[x][0]:
                 res[x] = []
-        print(res)
         data = dict()
         curr_year = datetime.datetime.now().year
 
         bar = progressbar.ProgressBar(maxval=len(ids_list)).start()
-        print(res.keys())
         for i, userid in enumerate(ids_list):
             data[userid] = self.api.users.get(user_ids=userid, fields=list(res.keys()))
             q = data[userid][0]
-            if i == 5:
-                print(q)
             for x in res:
                 if x == 'bdate':
                     z = q.get(x, 0)
@@ -101,7 +97,6 @@ class VKStatistic:
             bar.update(i)
         bar.finish()
         print("Сбор статистики окончен")
-        print(res)
 
         dict_result = dict()
         for x in res:  #Заполняем по ключам итогового отображения словарём с посчитанным числом каждого из значений
@@ -124,7 +119,8 @@ class VKStatistic:
 
         df = pd.DataFrame.from_dict(dict_result)
 
-        df.plot.pie(subplots=True, legend=True, layout=(2, 2), figsize=(30, 30), startangle=-45)
+        num_size = len(ids_list)/15
+        df.plot.pie(subplots=True, legend=True, layout=(2, 2), figsize=(num_size, num_size), startangle=-45)
         plt.tight_layout()
         plt.show()
 
